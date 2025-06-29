@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Analysis in Clinical Practice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1.1rem;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .search-container i {
+            position: absolute;
+            right: 20px;
+            top: 12px;
+            color: #777;
+        }
+        
+        .mindmap-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .category {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .category:hover {
+            transform: translateY(-10px);
+        }
+        
+        .category-header {
+            padding: 20px;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .prognosis { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .outcome { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .research { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .quality { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .collaboration { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .decision { background: linear-gradient(135deg, #1abc9c, #16a085); }
+        .casestudy { background: linear-gradient(135deg, #e84393, #fd79a8); }
+        .summary { background: linear-gradient(135deg, #00cec9, #00b894); }
+        
+        .category-header i {
+            transition: transform 0.3s ease;
+        }
+        
+        .category-header.active i {
+            transform: rotate(180deg);
+        }
+        
+        .content {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content h3 {
+            margin-top: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .content ul {
+            margin: 15px 0 15px 20px;
+        }
+        
+        .content li {
+            margin-bottom: 10px;
+        }
+        
+        .content p {
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .sub-section {
+            margin-left: 15px;
+            padding-left: 10px;
+            border-left: 2px solid #3498db;
+            margin-top: 10px;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 15px 0;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .mindmap-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Analyzing Evidence in Clinical Practice</h1>
+            <h2>Prognosis and Outcome Measures for Healthcare Professionals</h2>
+            <div class="description">
+                <p>This comprehensive guide provides a structured approach to analyzing evidence about prognosis and outcome measures in clinical practice.</p>
+            </div>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for topics, concepts, or methods...">
+            <i class="fas fa-search"></i>
+        </div>
+        
+        <div class="mindmap-container">
+            <!-- Concept of Prognosis -->
+            <div class="category">
+                <div class="category-header prognosis">
+                    <span><i class="fas fa-chart-line"></i> Concept of Prognosis</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Definition</h3>
+                    <p>Prognosis refers to the predicted course and outcome of a disease or condition, including the likelihood of recovery, recurrence, or progression.</p>
+                    
+                    <h3>Key Components</h3>
+                    <ul>
+                        <li><span class="highlight">Baseline risk</span>: Probability of an outcome without intervention</li>
+                        <li><span class="highlight">Prognostic factors</span>: Variables that influence the outcome</li>
+                        <li><span class="highlight">Timeframe</span>: Short-term vs. long-term outcomes</li>
+                    </ul>
+                    
+                    <h3>Clinical Relevance</h3>
+                    <ul>
+                        <li>Helps clinicians set realistic goals</li>
+                        <li>Enables tailored interventions</li>
+                        <li>Facilitates effective communication with patients</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Research Design -->
+            <div class="category">
+                <div class="category-header research">
+                    <span><i class="fas fa-microscope"></i> Research Design for Prognostic Studies</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Types of Studies</h3>
+                    <ul>
+                        <li><span class="highlight">Cohort Studies</span>: Follow patients over time to identify prognostic factors</li>
+                        <li><span class="highlight">Case-Control Studies</span>: Compare patients with/without outcomes to identify predictors</li>
+                        <li><span class="highlight">Systematic Reviews & Meta-Analyses</span>: Synthesize evidence from multiple studies</li>
+                    </ul>
+                    
+                    <h3>Key Features of Quality Studies</h3>
+                    <ul>
+                        <li>Clear inclusion/exclusion criteria</li>
+                        <li>Adequate sample size and follow-up duration</li>
+                        <li>Adjustment for confounding factors</li>
+                        <li>Appropriate statistical methods (hazard ratios, survival analysis)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Quality Evaluation -->
+            <div class="category">
+                <div class="category-header quality">
+                    <span><i class="fas fa-check-circle"></i> Evaluating Quality of Prognostic Studies</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Key Questions to Ask</h3>
+                    <ul>
+                        <li>Was the study population well-defined and representative?</li>
+                        <li>Were prognostic factors measured reliably and validly?</li>
+                        <li>Was follow-up sufficiently long and complete?</li>
+                        <li>Were statistical methods appropriate?</li>
+                    </ul>
+                    
+                    <h3>Quality Assessment Tools</h3>
+                    <ul>
+                        <li><span class="highlight">QUIPS</span>: Quality in Prognosis Studies tool</li>
+                        <li><span class="highlight">PROBAST</span>: Prediction model Risk Of Bias Assessment Tool</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Collaboration -->
+            <div class="category">
+                <div class="category-header collaboration">
+                    <span><i class="fas fa-users"></i> Discussing Evidence with Professionals</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Interprofessional Collaboration</h3>
+                    <ul>
+                        <li>Share findings with colleagues, physicians, and healthcare providers</li>
+                        <li>Discuss clinical relevance and applicability of evidence</li>
+                    </ul>
+                    
+                    <h3>Effective Discussion Steps</h3>
+                    <ul>
+                        <li>Summarize study design and key findings</li>
+                        <li>Highlight strengths and limitations of evidence</li>
+                        <li>Relate findings to specific patient or population</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Decision Making -->
+            <div class="category">
+                <div class="category-header decision">
+                    <span><i class="fas fa-clipboard-check"></i> Drawing Conclusions for Clinical Decisions</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Integrating Evidence into Practice</h3>
+                    <ul>
+                        <li>Combine prognostic evidence with patient preferences and clinical expertise</li>
+                        <li>Use validated prognostic tools or prediction models</li>
+                    </ul>
+                    
+                    <h3>Example: Low Back Pain</h3>
+                    <ul>
+                        <li>Prognostic factors: Duration of symptoms, psychological factors</li>
+                        <li>Use factors to predict recovery and plan treatment</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Outcome Measures -->
+            <div class="category">
+                <div class="category-header outcome">
+                    <span><i class="fas fa-ruler"></i> Outcome Measures in Clinical Practice</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Definition & Importance</h3>
+                    <p>Tools or instruments used to assess treatment effects, track progress, and evaluate patient outcomes.</p>
+                    <ul>
+                        <li>Provide quantifiable data to guide decisions</li>
+                        <li>Measure intervention success</li>
+                        <li>Facilitate communication with patients and professionals</li>
+                    </ul>
+                    
+                    <h3>Key Elements</h3>
+                    <div class="sub-section">
+                        <h4>Domains of Measurement</h4>
+                        <ul>
+                            <li>Physical function (ROM, strength)</li>
+                            <li>Pain levels (VAS, NPRS)</li>
+                            <li>Quality of life (SF-36, EQ-5D)</li>
+                            <li>Patient satisfaction and adherence</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sub-section">
+                        <h4>Types of Measures</h4>
+                        <ul>
+                            <li><span class="highlight">Subjective</span>: Patient-reported (pain scales, questionnaires)</li>
+                            <li><span class="highlight">Objective</span>: Clinician-measured (strength tests, ROM)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Validity & Reliability -->
+            <div class="category">
+                <div class="category-header summary">
+                    <span><i class="fas fa-balance-scale"></i> Validity & Reliability of Measures</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Validity</h3>
+                    <p>Whether a measure accurately assesses what it's intended to measure.</p>
+                    <ul>
+                        <li><span class="highlight">Content Validity</span>: Covers all aspects of construct</li>
+                        <li><span class="highlight">Criterion Validity</span>: Correlates with gold standard</li>
+                        <li><span class="highlight">Construct Validity</span>: Aligns with theoretical expectations</li>
+                    </ul>
+                    
+                    <h3>Reliability</h3>
+                    <p>Consistency or repeatability of a measure.</p>
+                    <ul>
+                        <li><span class="highlight">Test-Retest</span>: Consistency over time</li>
+                        <li><span class="highlight">Inter-Rater</span>: Agreement between observers</li>
+                        <li><span class="highlight">Intra-Rater</span>: Consistency of same observer</li>
+                    </ul>
+                    
+                    <h3>Assessment Methods</h3>
+                    <ul>
+                        <li>Intraclass Correlation Coefficient (ICC)</li>
+                        <li>Kappa statistics</li>
+                        <li>Pilot studies</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Case Studies -->
+            <div class="category">
+                <div class="category-header casestudy">
+                    <span><i class="fas fa-file-medical"></i> Case Studies & Applications</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="content">
+                    <h3>Prognosis Case: Chronic Low Back Pain</h3>
+                    <ul>
+                        <li>Patient: 45-year-old with chronic low back pain</li>
+                        <li>Prognostic factors: Obesity, sedentary lifestyle, history of depression</li>
+                        <li>Evidence: Cohort study shows poor outcomes with multiple risk factors</li>
+                        <li>Discussion: Communication strategies and interventions to improve prognosis</li>
+                    </ul>
+                    
+                    <h3>Outcome Measures Case: Total Knee Replacement</h3>
+                    <ul>
+                        <li>Patient: 60-year-old post-total knee replacement</li>
+                        <li>Measures: Timed Up and Go Test (TUG), KOOS</li>
+                        <li>Discussion: Informing prognosis, treatment, and communication with surgeon</li>
+                    </ul>
+                    
+                    <h3>Clinical Reasoning</h3>
+                    <ul>
+                        <li>Select appropriate measures based on condition and goals</li>
+                        <li>Collect baseline data and track progress</li>
+                        <li>Adjust treatment based on outcomes</li>
+                        <li>Balance evidence with patient preferences</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Comprehensive Guide to Evidence Analysis in Clinical Practice - For Healthcare Professionals</p>
+            <p>Integrating Prognosis and Outcome Measures for Evidence-Based Decision Making</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle category content
+            const categoryHeaders = document.querySelectorAll('.category-header');
+            categoryHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    // Toggle active class on header
+                    this.classList.toggle('active');
+                    
+                    // Get the content element
+                    const content = this.parentNode.querySelector('.content');
+                    
+                    // Toggle the active class on content
+                    content.classList.toggle('active');
+                });
+            });
+            
+            // Add animation to categories on load
+            const categories = document.querySelectorAll('.category');
+            categories.forEach((category, index) => {
+                setTimeout(() => {
+                    category.style.opacity = '0';
+                    category.style.transform = 'translateY(20px)';
+                    category.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    
+                    setTimeout(() => {
+                        category.style.opacity = '1';
+                        category.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 150);
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                categories.forEach(category => {
+                    const header = category.querySelector('.category-header').textContent.toLowerCase();
+                    const content = category.querySelector('.content').textContent.toLowerCase();
+                    
+                    if (header.includes(searchTerm) || content.includes(searchTerm)) {
+                        category.style.display = 'block';
+                        category.querySelector('.category-header').classList.add('active');
+                        category.querySelector('.content').classList.add('active');
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Initially open the first category
+            if (categories.length > 0) {
+                const firstHeader = categories[0].querySelector('.category-header');
+                const firstContent = categories[0].querySelector('.content');
+                firstHeader.classList.add('active');
+                firstContent.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
